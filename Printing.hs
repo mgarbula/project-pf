@@ -72,4 +72,4 @@ printRest [] = "=|" ++ printMultipleEquals lengthOfBoard
 printRest (x:xs) = printRow x ++ (printLineRow lengthOfBoard) ++ printRest xs
 
 printAll :: [[(Integer, Char, Char)]] -> [Char] 
-printAll rest = printTop topLetters ++ printRest rest
+printAll board = printTop topLetters ++ printRest board
