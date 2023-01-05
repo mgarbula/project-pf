@@ -1,8 +1,10 @@
 import Printing
+import Play
 
 startGame color = do 
-    putStrLn (printTop topLetters)
-    putStrLn (printRest (fillBoard numbers topLetters color))
+    putStrLn (printAll board)
+   -- go board
+    where board = fillBoard numbers topLetters color
 
 main = do
     putStrLn "Wybierz swoj kolor: bialy (B), czarny (C)"

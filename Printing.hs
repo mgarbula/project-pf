@@ -38,7 +38,7 @@ printLetter :: Char -> [Char]
 printLetter x = "| " ++ show x ++ " "
 
 printMultipleEquals :: Int -> [Char]
-printMultipleEquals 0 = "||"
+printMultipleEquals 0 = endLine 
 printMultipleEquals x = printEquals ++ printMultipleEquals (x - 1)
 
 printTop :: [Char] -> [Char]    
@@ -70,3 +70,6 @@ printRow (x:xs)
 printRest :: [[(Integer, Char, Char)]] -> [Char]
 printRest [] = "=|" ++ printMultipleEquals lengthOfBoard
 printRest (x:xs) = printRow x ++ (printLineRow lengthOfBoard) ++ printRest xs
+
+printAll :: [[(Integer, Char, Char)]] -> [Char] 
+printAll rest = printTop topLetters ++ printRest rest
