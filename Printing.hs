@@ -18,19 +18,12 @@ myColor c
     | c == "B" = 'B'
     | otherwise = 'C'
 
-fillBoard :: [[(Integer, Char, Char)]] -> String -> [[(Integer, Char, Char)]]
-fillBoard [] _ = []
-fillBoard (x:xs) c
-    | first (head x) == 1 || first (head x) == 2 = (map (\(q, w, _) -> (q, w, oponentColor c)) x) : fillBoard xs c
-    | first (head x) == 7 || first (head x) == 8 = (map (\(q, w, _) -> (q, w, myColor c)) x) : fillBoard xs c
-    | otherwise = x : fillBoard xs c
-
-makeBoard :: [Integer] -> [Char] -> String -> [[(Integer, Char, Char)]]
-makeBoard n l c = fillBoard (makeEmptyBoard n l c) c
-
-makeEmptyBoard :: [Integer] -> [Char] -> String -> [[(Integer, Char, Char)]]
-makeEmptyBoard [] _ _ = []
-makeEmptyBoard (n:ns) l c = (map (\x -> (n, x, ' ')) l) : makeEmptyBoard ns l c
+fillBoard :: [Integer] -> [Char] -> String -> [[(Integer, Char, Char)]]
+fillBoard [] _ _ = []
+fillBoard (n:ns) l c 
+    | n == 1 || n == 2 = (map (\x -> (n, x, oponentColor c)) l) : fillBoard ns l c
+    | n == 7 || n == 8 = (map (\x -> (n, x, myColor c)) l) : fillBoard ns l c
+    | otherwise = (map (\x -> (n, x, ' ')) l) : fillBoard ns l c
 
 first :: (a, b, c) -> a
 first (x, _, _) = x
