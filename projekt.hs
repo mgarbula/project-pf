@@ -3,7 +3,7 @@ import Play
 
 startGame color = do 
     putStrLn (printAll board)
-   -- go board
+    go board color
     where board = fillBoard numbers topLetters color
 
 main = do
