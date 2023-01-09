@@ -35,7 +35,7 @@ third :: (a, b, c) -> c
 third (_, _, x) = x
 
 printLetter :: Char -> [Char]
-printLetter x = "| " ++ show x ++ " "
+printLetter x = "|  " ++ [x] ++ "  "
 
 printMultipleEquals :: Int -> [Char]
 printMultipleEquals 0 = endLine 
