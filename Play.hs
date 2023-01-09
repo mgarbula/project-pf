@@ -34,17 +34,7 @@ clearPositionBoard board move = takeFirstElements board number ++ [clearPosition
           number = read (tail (fst myMove))
           rest = takeRestElements board number
 
--- move :: [Field] -> (String, String) -> [Field]
--- move row myMove = takeWhile (\r -> second r /= head (fst myMove)) row ++ [changePosition (head rest) (snd myMove)] ++ tail rest
---     where rest = dropWhile (\r -> second r /= head (fst myMove)) row
-
--- makeMove :: [[Field]] -> String -> String -> [[Field]]
--- makeMove board move color = takeWhile (\b -> first (head b) /= read (tail (fst myMove))) board ++ head rest ++ tail rest
---     where myMove = fromTo move
---           rest = dropWhile (\b -> first (head b) /= read (tail (fst myMove))) board
-
 makeMove :: [[Field]] -> String -> Color -> [[Field]]
---makeMove board move color = changePosition (clearPositionBoard board move)
 makeMove board move color = changePositionBoard (clearPositionBoard board move) move color
 
 
