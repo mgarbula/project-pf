@@ -8,6 +8,8 @@ printLine = "|-----"
 printEquals = "|====="
 endLine = "||\n"
 
+type Field = (Integer, Char, Char)
+
 oponentColor :: String -> Char
 oponentColor c
     | c == "B" = 'C'
@@ -18,7 +20,7 @@ myColor c
     | c == "B" = 'B'
     | otherwise = 'C'
 
-fillBoard :: [Integer] -> [Char] -> String -> [[(Integer, Char, Char)]]
+fillBoard :: [Integer] -> [Char] -> String -> [[Field]] -- pozycja i znak ktory ma byc drukowany
 fillBoard [] _ _ = []
 fillBoard (n:ns) l c 
     | n == 1 || n == 2 = (map (\x -> (n, x, oponentColor c)) l) : fillBoard ns l c
@@ -57,19 +59,19 @@ printLineRow x
     | x == lengthOfBoard = "-|" ++ printLine ++ printLineRow (x - 1)
     | otherwise = printLine ++ printLineRow (x - 1)
 
-printSymbol :: (Integer, Char, Char) -> [Char]
+printSymbol :: Field -> [Char]
 printSymbol x = "|  " ++ [third x] ++ "  "
 
-printRow :: [(Integer, Char, Char)] -> [Char]
+printRow :: [Field] -> [Char]
 printRow [] = endLine
 printRow (x:xs) 
     | length (x:xs) == lengthOfBoard = printNumber ++ printSymbol x ++ printRow xs
     | otherwise = printSymbol x ++ printRow xs
     where printNumber = show (first x) ++ "|" 
 
-printRest :: [[(Integer, Char, Char)]] -> [Char]
+printRest :: [[Field]] -> [Char]
 printRest [] = "=|" ++ printMultipleEquals lengthOfBoard
 printRest (x:xs) = printRow x ++ (printLineRow lengthOfBoard) ++ printRest xs
 
-printAll :: [[(Integer, Char, Char)]] -> [Char] 
+printAll :: [[Field]] -> [Char] 
 printAll board = printTop topLetters ++ printRest board
