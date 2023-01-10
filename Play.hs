@@ -40,12 +40,40 @@ clearPositionBoard board move = takeFirstElements board number ++ [clearPosition
 makeMove :: [[Field]] -> String -> Color -> [[Field]]
 makeMove board move color = changePositionBoard (clearPositionBoard board move) move color
 
+moveForward :: Position -> Position -> Field -> Bool
+moveForward from to fieldTo = fst from == fst to && snd from == snd to + 1 && third fieldTo == ' '
+
+valOfLet letter = snd (head (dropWhile (\l -> fst l /= letter) valueOfLetters))
+
+jump :: Position -> Position -> Field -> Bool
+jump from to fieldTo = (abs (snd from - snd to) == 2 && abs (valOfLet (fst from) - valOfLet (fst to)) == 1) || (abs (snd from - snd to) == 1 && abs (valOfLet (fst from) - valOfLet (fst to)) == 2) && third fieldTo == ' '
+
+getField field board = head (dropWhile (\f -> second f /= fst field) (head (dropWhile (\t -> first (head t) /= snd field) board)))
+
+fieldCorrect field = elem (fst field) topLetters && elem (snd field) numbers
+
+possibilityOfMove :: [[Field]] -> String -> Bool
+possibilityOfMove board move = fieldCorrect from && fieldCorrect to && third fieldFrom /= ' ' && (moveForward from to fieldTo || jump from to fieldTo)
+    where myMove = fromTo move 
+          from = fst myMove
+          to = snd myMove
+          fieldFrom = getField from board
+          fieldTo = getField to board
+
+playersMove :: [[Field]] -> String -> IO()
+playersMove board color = do
+    putStrLn "Twoj ruch"
+    move <- getLine
+    if possibilityOfMove board move
+        then do
+            let newBoard = makeMove board move (myColor color)
+            putStrLn (printAll newBoard)
+            go newBoard color
+        else do
+            putStrLn "Niedozwolony ruch"
+            playersMove board color
 
 go :: [[Field]] -> String -> IO ()
 go board color = do
-    putStrLn "Twoj ruch"
-    move <- getLine
-    let newBoard = makeMove board move (myColor color)
-    putStrLn (printAll newBoard)
-    go newBoard color
+    playersMove board color
     
