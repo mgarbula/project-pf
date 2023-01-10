@@ -2,6 +2,7 @@ module Printing where
 
 topLetters = ['A'..'H']
 numbers = [1..8]
+valueOfLetters = zip topLetters numbers
 lengthOfBoard = 8
 printSpaceForJumper = "|     "
 printLine = "|-----"
