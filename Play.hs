@@ -75,27 +75,3 @@ possibilityOfMove board move = fieldCorrect from && fieldCorrect to && third fie
           to = snd myMove
           fieldFrom = getField from board
           fieldTo = getField to board
-
-playersMove :: [[Field]] -> String -> IO()
-playersMove board color = do
-    putStrLn "Twoj ruch"
-    move <- getLine
-    if possibilityOfMove board move
-        then do
-            let playerColor = myColor color
-            let newBoard = makeMove board move playerColor
-            let myFields = changePlayerField (playerFields board playerColor) (fromTo move) playerColor
-            putStrLn (printAll newBoard)
-            if possibleWinOfPlayer myFields
-                then do
-                    putStrLn "Koniec gry! Wygrales!"
-            else do
-                go newBoard color
-        else do
-            putStrLn "Niedozwolony ruch"
-            playersMove board color
-
-go :: [[Field]] -> String -> IO ()
-go board color = do
-    playersMove board color
-    

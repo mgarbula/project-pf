@@ -1,5 +1,5 @@
 import Printing
-import Play
+import Players
 
 startGame color = do 
     putStrLn (printAll board)
@@ -10,4 +10,3 @@ main = do
     putStrLn "Wybierz swoj kolor: bialy (B), czarny (C)"
     color <- getLine
     startGame color
-    --putStrLn (printRest numbers)
