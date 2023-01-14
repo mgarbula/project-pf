@@ -5,6 +5,22 @@ type Move = (Position, Position)
 type Color = Char
 type Position = (Char, Integer)
 
+lengthOfFinal final fields = length (filter (\f -> first f == final) fields) == 8
+
+possibleWinOfPlayer :: [Field] ->  Bool
+possibleWinOfPlayer fields = lengthOfFinal 1 fields && lengthOfFinal 2 fields
+
+playerFields :: [[Field]] -> Color -> [Field]
+playerFields board color = filter (\p -> third p == color) (foldl (\acc t -> acc ++ t) [] board)
+
+noFrom from = \f -> second f /= fst from || first f /= snd from
+
+changePlayerField :: [Field] -> Move -> Color -> [Field]
+changePlayerField fields move color = (snd to, fst to, color) : (takeWhile (noFrom from) fields ++ tail (dropWhile (noFrom from) fields))
+    where
+        from = fst move
+        to = snd move
+
 fromTo :: String -> Move
 fromTo move = ((head firstPosition, read (tail firstPosition) :: Integer), (head secondPosition, read (tail secondPosition) :: Integer))
     where firstPosition = takeWhile (/= '-') move
@@ -66,9 +82,15 @@ playersMove board color = do
     move <- getLine
     if possibilityOfMove board move
         then do
-            let newBoard = makeMove board move (myColor color)
+            let playerColor = myColor color
+            let newBoard = makeMove board move playerColor
+            let myFields = changePlayerField (playerFields board playerColor) (fromTo move) playerColor
             putStrLn (printAll newBoard)
-            go newBoard color
+            if possibleWinOfPlayer myFields
+                then do
+                    putStrLn "Koniec gry! Wygrales!"
+            else do
+                go newBoard color
         else do
             putStrLn "Niedozwolony ruch"
             playersMove board color
