@@ -7,8 +7,8 @@ type Position = (Char, Integer)
 
 lengthOfFinal final fields = length (filter (\f -> first f == final) fields) == 8
 
-possibleWinOfPlayer :: [Field] ->  Bool
-possibleWinOfPlayer fields = lengthOfFinal 1 fields && lengthOfFinal 2 fields
+possibleWin :: [Field] -> Integer -> Integer -> Bool
+possibleWin fields one two = lengthOfFinal one fields && lengthOfFinal two fields
 
 playerFields :: [[Field]] -> Color -> [Field]
 playerFields board color = filter (\p -> third p == color) (foldl (\acc t -> acc ++ t) [] board)

@@ -13,7 +13,7 @@ playersMove board color = do
             let newBoard = makeMove board move playerColor
             let myFields = changePlayerField (playerFields board playerColor) (fromTo move) playerColor
             putStrLn (printAll newBoard)
-            if possibleWinOfPlayer myFields
+            if possibleWin myFields 1 2
                 then do
                     putStrLn "Koniec gry! Wygrales!"
                 else do
@@ -36,7 +36,7 @@ oponent board color = do
             let newBoard = makeMove board move myColor
             let myFields = changePlayerField (playerFields board myColor) (fromTo move) myColor
             putStrLn (printAll newBoard)
-            if possibleWinOfPlayer myFields
+            if possibleWin myFields 7 8
                 then do
                     putStrLn "Koniec gry! Wygrales!"
                 else do
