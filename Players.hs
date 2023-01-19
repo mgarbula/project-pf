@@ -47,25 +47,25 @@ oponent board color = do
     putStrLn "Ruch przeciwnika"
     let myColor = oponentColor color
     let myFields = oponentFields board myColor
-    let possibleMove = moveForwardPossible board myFields
-    if fst possibleMove
+    let possibleMove = jumpForwardPossible board myFields --  
+    if first possibleMove
         then do
-            let position = snd possibleMove
-            let move = fst position : (show (snd position) ++ ('-' : (fst position) : show (snd position + 1)))
-            updateBoard board move myColor color            
+            updateBoard board (makeMoveString (second possibleMove) (third possibleMove)) myColor color
     else do
-        let possibleMove = jumpForwardPossible board myFields
-        if first possibleMove
+        let possibleMove = moveForwardPossible board myFields
+        if fst possibleMove
             then do
-                updateBoard board (makeMoveString (second possibleMove) (third possibleMove)) myColor color
+                let position = snd possibleMove
+                let move = fst position : (show (snd position) ++ ('-' : (fst position) : show (snd position + 1)))
+                updateBoard board move myColor color    
         else do
             let possibleMove = jumpBackPossible board myFields
             if first possibleMove
                 then do
                     updateBoard board (makeMoveString (second possibleMove) (third possibleMove)) myColor color
-                else do 
-                    putStrLn "Brak ruchu"
-                    playersMove board color
+            else do 
+                putStrLn "Brak ruchu"
+                playersMove board color
 
 go :: [[Field]] -> String -> IO ()
 go board color = do

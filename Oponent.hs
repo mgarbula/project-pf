@@ -32,9 +32,9 @@ getColumn columnValue = head (dropWhile (\(_, value) -> value /= columnValue + 1
 isSomeJumpPossible :: [[Field]] -> Field -> (Bool, Position, Position)
 isSomeJumpPossible board field 
     | isFieldEmpty board (columnValue + 1) (row + 2) = (True, (second field, row), (fst (getColumn columnValue), row + 2))
+    | isFieldEmpty board (columnValue - 2) (row + 1) = (True, (second field, row), (fst (getColumn (columnValue - 3)), row + 1)) -- getColumn dodaje 1, więc musze odjąc 3
     | isFieldEmpty board (columnValue - 1) (row + 2) = (True, (second field, row), (fst (getColumn (columnValue - 2)), row + 2))
     | isFieldEmpty board (columnValue + 2) (row + 1) = (True, (second field, row), (fst (getColumn (columnValue + 1)), row + 1))
-    | isFieldEmpty board (columnValue - 2) (row + 1) = (True, (second field, row), (fst (getColumn (columnValue - 3)), row + 1)) -- getColumn dodaje 1, więc musze odjąc 3
     | otherwise = (False, ('Z', 9), ('Z', 9))
     where columnValue = snd (head (dropWhile (\(letter, _) -> letter /= second field) valueOfLetters))
           row = first field
@@ -48,10 +48,10 @@ jumpForwardPossible board (x:xs)
 
 isSomeJumpBackPossible :: [[Field]] -> Field -> (Bool, Position, Position)
 isSomeJumpBackPossible board field
-    | isFieldEmpty board (columnValue + 1) (row - 2) = (True, (second field, row), (fst (getColumn columnValue), row - 2))
-    | isFieldEmpty board (columnValue - 1) (row - 2) = (True, (second field, row), (fst (getColumn (columnValue - 2)), row - 2))
+    | isFieldEmpty board (columnValue - 2) (row - 1) = (True, (second field, row), (fst (getColumn (columnValue - 3)), row - 1))
     | isFieldEmpty board (columnValue + 2) (row - 1) = (True, (second field, row), (fst (getColumn (columnValue + 1)), row - 1))
-    | isFieldEmpty board (columnValue - 2) (row + 1) = (True, (second field, row), (fst (getColumn (columnValue - 3)), row - 1))
+    | isFieldEmpty board (columnValue - 1) (row - 2) = (True, (second field, row), (fst (getColumn (columnValue - 2)), row - 2))
+    | isFieldEmpty board (columnValue + 1) (row - 2) = (True, (second field, row), (fst (getColumn columnValue), row - 2))
     | otherwise = (False, ('Z', 9), ('Z', 9))
     where columnValue = snd (head (dropWhile (\(letter, _) -> letter /= second field) valueOfLetters))
           row = first field
