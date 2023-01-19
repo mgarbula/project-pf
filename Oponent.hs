@@ -38,9 +38,9 @@ isSomeJumpPossible board field
     where columnValue = snd (head (dropWhile (\(letter, _) -> letter /= second field) valueOfLetters))
           row = first field
 
-jumpPossible :: [[Field]] -> [Field] -> (Bool, Position, Position)
-jumpPossible _ [] = (False, ('Z', 9), ('Z', 9))
-jumpPossible board (x:xs)
+jumpForwardPossible :: [[Field]] -> [Field] -> (Bool, Position, Position)
+jumpForwardPossible _ [] = (False, ('Z', 9), ('Z', 9))
+jumpForwardPossible board (x:xs)
     | first someJump = someJump
-    | otherwise = jumpPossible board xs
+    | otherwise = jumpForwardPossible board xs
     where someJump = isSomeJumpPossible board x
