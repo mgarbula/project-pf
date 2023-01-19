@@ -68,8 +68,17 @@ getField field board = head (dropWhile (\f -> second f /= fst field) (head (drop
 
 fieldCorrect field = elem (fst field) topLetters && elem (snd field) numbers
 
+howMany :: (Eq a) => a -> [a] -> Int
+howMany _ [] = 0
+howMany q (x:xs) 
+    | q == x = 1 + howMany q xs
+    | otherwise = howMany q xs
+
+correctFormat :: String -> Bool
+correctFormat move = length move == 5 && head (tail (tail move)) == '-' && howMany '-' move == 1
+
 possibilityOfMove :: [[Field]] -> String -> Bool
-possibilityOfMove board move = fieldCorrect from && fieldCorrect to && third fieldFrom /= ' ' && (moveForward from to fieldTo || jump from to fieldTo)
+possibilityOfMove board move = correctFormat move && fieldCorrect from && fieldCorrect to && third fieldFrom /= ' ' && (moveForward from to fieldTo || jump from to fieldTo)
     where myMove = fromTo move 
           from = fst myMove
           to = snd myMove
