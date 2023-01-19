@@ -62,7 +62,7 @@ moveForward from to fieldTo = fst from == fst to && snd from == snd to + 1 && th
 valOfLet letter = snd (head (dropWhile (\l -> fst l /= letter) valueOfLetters))
 
 jump :: Position -> Position -> Field -> Bool
-jump from to fieldTo = (abs (snd from - snd to) == 2 && abs (valOfLet (fst from) - valOfLet (fst to)) == 1) || (abs (snd from - snd to) == 1 && abs (valOfLet (fst from) - valOfLet (fst to)) == 2) && third fieldTo == ' '
+jump from to fieldTo = (abs (snd from - snd to) == 2 && abs (valOfLet (fst from) - valOfLet (fst to)) == 1) && third fieldTo == ' ' || (abs (snd from - snd to) == 1 && abs (valOfLet (fst from) - valOfLet (fst to)) == 2) && third fieldTo == ' '
 
 getField field board = head (dropWhile (\f -> second f /= fst field) (head (dropWhile (\t -> first (head t) /= snd field) board)))
 
