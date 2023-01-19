@@ -10,7 +10,7 @@ chooseColor :: IO()
 chooseColor = do
     putStrLn "Wybierz swoj kolor: bialy (B), czarny (C)"
     color <- getLine
-    if color /= "B" || color /= "C"
+    if color /= "B" && color /= "C"
         then do
             putStrLn "Podano niepoprawny kolor"
             chooseColor
