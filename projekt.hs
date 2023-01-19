@@ -6,7 +6,16 @@ startGame color = do
     go board color
     where board = fillBoard numbers topLetters color
 
-main = do
+chooseColor :: IO()
+chooseColor = do
     putStrLn "Wybierz swoj kolor: bialy (B), czarny (C)"
     color <- getLine
-    startGame color
+    if color /= "B" || color /= "C"
+        then do
+            putStrLn "Podano niepoprawny kolor"
+            chooseColor
+    else
+        startGame color
+
+main = do
+    chooseColor
