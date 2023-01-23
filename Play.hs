@@ -77,8 +77,8 @@ howMany q (x:xs)
 correctFormat :: String -> Bool
 correctFormat move = length move == 5 && head (tail (tail move)) == '-' && howMany '-' move == 1
 
-possibilityOfMove :: [[Field]] -> String -> Bool
-possibilityOfMove board move = correctFormat move && fieldCorrect from && fieldCorrect to && third fieldFrom /= ' ' && (moveForward from to fieldTo || jump from to fieldTo)
+possibilityOfMove :: [[Field]] -> String -> Color -> Bool
+possibilityOfMove board move color = correctFormat move && fieldCorrect from && fieldCorrect to && third fieldFrom == color && (moveForward from to fieldTo || jump from to fieldTo)
     where myMove = fromTo move 
           from = fst myMove
           to = snd myMove

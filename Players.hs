@@ -12,7 +12,7 @@ playersMove board color = do
             putStrLn "Nie podano ruchu"
             playersMove board color
         else do
-            if possibilityOfMove board move
+            if possibilityOfMove board move (myColor color)
                 then do
                     let playerColor = myColor color
                     let newBoard = makeMove board move playerColor
