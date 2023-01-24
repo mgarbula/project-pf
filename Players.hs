@@ -46,7 +46,7 @@ oponent :: [[Field]] -> String -> IO()
 oponent board color = do
     putStrLn "Ruch przeciwnika"
     let myColor = oponentColor color
-    let myFields = oponentFields board myColor
+    let myFields = playerFields board myColor
     let possibleMove = jumpForwardPossible board myFields --  
     if first possibleMove
         then do

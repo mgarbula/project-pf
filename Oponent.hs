@@ -4,9 +4,6 @@ import Printing
 
 target = map (\l -> (7, l)) topLetters ++ map (\l -> (8, l)) topLetters
 
-oponentFields :: [[Field]] -> Color -> [Field]
-oponentFields board color = filter (\f -> first f /= 7 || first f /= 8) (playerFields board color)
-
 isNextEmpty :: [[Field]] -> Field -> Bool
 isNextEmpty board field  
     | elem (first field + 1) numbers == False = False
