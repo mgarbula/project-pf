@@ -16,7 +16,8 @@ playersMove board color = do
                 then do
                     let playerColor = myColor color
                     let newBoard = makeMove board move playerColor
-                    let myFields = changePlayerField (playerFields board playerColor) (fromTo move) playerColor
+                    let myMove = fromTo (moves move)
+                    let myFields = changePlayerField (playerFields board playerColor) (head myMove, last myMove) playerColor
                     putStrLn (printAll newBoard)
                     if possibleWin myFields 1 2
                         then do
@@ -31,7 +32,8 @@ updateBoard :: [[Field]] -> String -> Char -> String -> IO()
 updateBoard board move myColor color = do
     putStrLn move
     let newBoard = makeMove board move myColor
-    let myFields = changePlayerField (playerFields board myColor) (fromTo move) myColor
+    let myMove = fromTo (moves move)
+    let myFields = changePlayerField (playerFields board myColor) (head myMove, last myMove) myColor
     putStrLn (printAll newBoard)
     if possibleWin myFields 7 8
         then do
