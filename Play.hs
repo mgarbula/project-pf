@@ -1,6 +1,5 @@
 module Play where
 import Printing
-import GHC.Generics (Generic(from))
 
 type Move = (Position, Position)
 type Color = Char
@@ -127,8 +126,10 @@ correctSigns = foldl (\acc m -> acc && elem m correctSigns) True
     where correctSigns = '-' : topLetters ++ ['1'..'9']
 
 possibilityOfMove :: [[Field]] -> String -> Color -> Bool
-possibilityOfMove board move color = correctFormat move && correctSigns move && (length myMoves == 2 && moveOne (head myMove) (head (tail myMove)) fieldTo || jump board myMove)
+possibilityOfMove board move color = correctFormat move && correctSigns move && third fieldFrom == color && third fieldTo == ' ' && (length myMoves == 2 && moveOne (head myMove) (head (tail myMove)) fieldTo || jump board myMove)
     where myMoves = moves move
           myMove = fromTo myMoves 
+          from = head myMove
           to = head (tail myMove)
+          fieldFrom = getField from board
           fieldTo = getField to board

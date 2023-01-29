@@ -4,58 +4,72 @@ import Printing
 
 target = map (\l -> (7, l)) topLetters ++ map (\l -> (8, l)) topLetters
 
-isNextEmpty :: [[Field]] -> Field -> Bool
-isNextEmpty board field  
-    | elem (first field + 1) numbers == False = False
-    | otherwise = third (head (filter (\f -> second f == second field) row)) == ' '
-    where row = head (dropWhile (\r -> first (head r) /= (first field) + 1) board)
-
-moveForwardPossible :: [[Field]] -> [Field] -> (Bool, Position)
-moveForwardPossible _ [] = (False, ('Z', 9))
-moveForwardPossible board (x:xs) 
-    | isNextEmpty board x = (True, (second x, first x))
-    | otherwise = moveForwardPossible board xs
-
 isFieldEmpty :: [[Field]] -> Integer -> Integer -> Bool
 isFieldEmpty board column row
     | row <= 0 || column <= 0 = False
     | row > 8 || column > 8 = False
-    | elem column (map (\(a, b) -> b) valueOfLetters) == False = False -- sprawdzam czy kolumna do ktorej chce przejsc istnieje
+    | not (elem column (map (\(a, b) -> b) valueOfLetters)) = False -- sprawdzam czy kolumna do ktorej chce przejsc istnieje
     | third (head (dropWhile (\c -> second c /= columnLetter) (head (dropWhile (\r -> first (head r) /= row) board)))) /= ' ' = False
     | otherwise = True
     where columnLetter = fst (head (dropWhile (\(_, val) -> val /= column) valueOfLetters))
 
-getColumn columnValue = head (dropWhile (\(_, value) -> value /= columnValue + 1) valueOfLetters)
-isSomeJumpPossible :: [[Field]] -> Field -> (Bool, Position, Position)
-isSomeJumpPossible board field 
-    | isFieldEmpty board (columnValue + 1) (row + 2) = (True, (second field, row), (fst (getColumn columnValue), row + 2))
-    | isFieldEmpty board (columnValue - 2) (row + 1) = (True, (second field, row), (fst (getColumn (columnValue - 3)), row + 1)) -- getColumn dodaje 1, więc musze odjąc 3
-    | isFieldEmpty board (columnValue - 1) (row + 2) = (True, (second field, row), (fst (getColumn (columnValue - 2)), row + 2))
-    | isFieldEmpty board (columnValue + 2) (row + 1) = (True, (second field, row), (fst (getColumn (columnValue + 1)), row + 1))
-    | otherwise = (False, ('Z', 9), ('Z', 9))
-    where columnValue = snd (head (dropWhile (\(letter, _) -> letter /= second field) valueOfLetters))
+getColumn columnValue = head (dropWhile (\(_, value) -> value /= columnValue) valueOfLetters)
+getColumnValue field = snd (head (dropWhile (\(letter, _) -> letter /= second field) valueOfLetters))
+
+moveOneForwardPossible :: [[Field]] -> [Field] -> (Bool, [Position])
+moveOneForwardPossible _ [] = (False, [('Z', 9)])
+moveOneForwardPossible board (x:xs)
+    | isFieldEmpty board (getColumnValue x) (first x + 1) = (True, [(second x, first x), (second x, first x + 1)])
+    | otherwise = moveOneForwardPossible board xs
+
+isSomeEmpty :: [[Field]] -> Field -> (Bool, Position)
+isSomeEmpty board field
+    | isFieldEmpty board (columnValue + 1) row = (True, (fst (getColumn (columnValue + 1)), row))
+    | isFieldEmpty board (columnValue - 1) row = (True, (fst (getColumn (columnValue - 1)), row))
+    | otherwise = (False, ('Z', 9))
+    where columnValue = getColumnValue field
           row = first field
 
-jumpForwardPossible :: [[Field]] -> [Field] -> (Bool, Position, Position)
-jumpForwardPossible _ [] = (False, ('Z', 9), ('Z', 9))
+moveOnePossible :: [[Field]] -> [Field] -> (Bool, [Position])
+moveOnePossible _ [] = (False, [('Z', 9)])
+moveOnePossible board (x:xs)
+    | let isEmpty = isSomeEmpty board x,
+        fst isEmpty = (True, [(second x, first x), snd isEmpty])
+    | otherwise = moveOnePossible board xs
+
+moveOneBackPossible :: [[Field]] -> [Field] -> (Bool, [Position])
+moveOneBackPossible _ [] = (False, [('Z', 9)])
+moveOneBackPossible board (x:xs)
+    | isFieldEmpty board (getColumnValue x) (first x - 1) = (True, [(second x, first x), (second x, first x - 1)])
+    | otherwise = moveOneBackPossible board xs
+
+findField :: [[Field]] -> Position -> Field
+findField board position = head (dropWhile (\f -> fst position /= second f || snd position /= first f) (foldl (++) [] board))
+
+isSomeJumpPossible :: [[Field]] -> Field -> [Position] -> [Position]
+isSomeJumpPossible board field previous
+    | let newField = (fst (getColumn columnValue), row + 2), 
+        isFieldEmpty board columnValue (row + 2) && not (isFieldEmpty board columnValue (row + 1)) && notElem newField previous = isSomeJumpPossible board (findField board (second field, first field + 2)) (previous ++ [newField])
+    | let newField = (fst (getColumn (columnValue + 2)), row),
+        isFieldEmpty board (columnValue + 2) row && not (isFieldEmpty board (columnValue + 1) row) && notElem newField previous = isSomeJumpPossible board (findField board (fst newField, first field)) (previous ++ [newField])
+    | let newField = (fst (getColumn (columnValue - 2)), row),
+        isFieldEmpty board (columnValue - 2) row && not (isFieldEmpty board (columnValue - 1) row) && notElem newField previous = isSomeJumpPossible board (findField board (fst newField, first field)) (previous ++ [newField])
+    | otherwise = previous
+    where columnValue = getColumnValue field
+          row = first field
+
+jumpForwardPossible :: [[Field]] -> [Field] -> (Bool, [Position])
+jumpForwardPossible _ [] = (False, [('Z', 9)])
 jumpForwardPossible board (x:xs)
-    | first someJump = someJump
+    | length someJump > 1 = (True, someJump)
     | otherwise = jumpForwardPossible board xs
-    where someJump = isSomeJumpPossible board x
+    where someJump = isSomeJumpPossible board x [(second x, first x)]
 
-isSomeJumpBackPossible :: [[Field]] -> Field -> (Bool, Position, Position)
-isSomeJumpBackPossible board field
-    | isFieldEmpty board (columnValue - 2) (row - 1) = (True, (second field, row), (fst (getColumn (columnValue - 3)), row - 1))
-    | isFieldEmpty board (columnValue + 2) (row - 1) = (True, (second field, row), (fst (getColumn (columnValue + 1)), row - 1))
-    | isFieldEmpty board (columnValue - 1) (row - 2) = (True, (second field, row), (fst (getColumn (columnValue - 2)), row - 2))
-    | isFieldEmpty board (columnValue + 1) (row - 2) = (True, (second field, row), (fst (getColumn columnValue), row - 2))
-    | otherwise = (False, ('Z', 9), ('Z', 9))
-    where columnValue = snd (head (dropWhile (\(letter, _) -> letter /= second field) valueOfLetters))
-          row = first field
-
-jumpBackPossible :: [[Field]] -> [Field] -> (Bool, Position, Position)
-jumpBackPossible _ [] = (False, ('Z', 9), ('Z', 9))
-jumpBackPossible board (x:xs)
-    | first someJump = someJump
-    | otherwise = jumpBackPossible board xs
-    where someJump = isSomeJumpBackPossible board x
+onlyOneJumpForward :: [[Field]] -> [Field] -> (Bool, [Position])
+onlyOneJumpForward _ [] = (False, [('Z', 9)])
+onlyOneJumpForward board (x:xs)
+    | let newField = (fst (getColumn columnValue), row + 2), 
+        isFieldEmpty board columnValue (row + 2) && not (isFieldEmpty board columnValue (row + 1)) = (True, isSomeJumpPossible board (findField board (second x, first x + 2)) ((second x, first x) : [newField]))
+    | otherwise = onlyOneJumpForward board xs
+    where columnValue = getColumnValue x
+          row = first x

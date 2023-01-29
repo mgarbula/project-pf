@@ -28,11 +28,15 @@ playersMove board color = do
                     putStrLn "Niedozwolony ruch"
                     playersMove board color
 
-updateBoard :: [[Field]] -> String -> Char -> String -> IO()
+makeMoveString :: [Position] -> String
+makeMoveString [] = ""
+makeMoveString (x:xs) = "-" ++ [fst x] ++ show (snd x) ++ makeMoveString xs
+
+updateBoard :: [[Field]] -> [Position] -> Char -> String -> IO()
 updateBoard board move myColor color = do
-    putStrLn move
-    let newBoard = makeMove board move myColor
-    let myMove = fromTo (moves move)
+    putStrLn (tail (makeMoveString move))
+    let myMove = [head move, last move]
+    let newBoard = makeMove board (tail (makeMoveString myMove)) myColor
     let myFields = changePlayerField (playerFields board myColor) (head myMove, last myMove) myColor
     putStrLn (printAll newBoard)
     if possibleWin myFields 7 8
@@ -41,33 +45,38 @@ updateBoard board move myColor color = do
         else do
             playersMove newBoard color
 
-makeMoveString :: Position -> Position -> String
-makeMoveString from to = fst from : (show (snd from) ++ ('-' : (fst to) : show (snd to)))
-
 oponent :: [[Field]] -> String -> IO()
 oponent board color = do
     putStrLn "Ruch przeciwnika"
     let myColor = oponentColor color
     let myFields = playerFields board myColor
-    let possibleMove = jumpForwardPossible board myFields --  
-    if first possibleMove
+    let possibleMove = onlyOneJumpForward board myFields
+    if fst possibleMove
         then do
-            updateBoard board (makeMoveString (second possibleMove) (third possibleMove)) myColor color
+            updateBoard board (snd possibleMove) myColor color
     else do
-        let possibleMove = moveForwardPossible board myFields
+        let possibleMove = moveOneForwardPossible board myFields
         if fst possibleMove
             then do
-                let position = snd possibleMove
-                let move = fst position : (show (snd position) ++ ('-' : (fst position) : show (snd position + 1)))
-                updateBoard board move myColor color    
+                updateBoard board (snd possibleMove) myColor color
         else do
-            let possibleMove = jumpBackPossible board myFields
-            if first possibleMove
+            let possibleMove = jumpForwardPossible board myFields
+            if fst possibleMove
                 then do
-                    updateBoard board (makeMoveString (second possibleMove) (third possibleMove)) myColor color
-            else do 
-                putStrLn "Brak ruchu"
-                playersMove board color
+                    updateBoard board (snd possibleMove) myColor color
+            else do
+                let possibleMove = moveOnePossible board myFields
+                if fst possibleMove
+                    then do
+                        updateBoard board (snd possibleMove) myColor color
+                else do
+                    let possibleMove = moveOneBackPossible board myFields
+                    if fst possibleMove
+                        then do
+                            updateBoard board (snd possibleMove) myColor color
+                    else do 
+                        putStrLn "Brak ruchu"
+                        playersMove board color
 
 go :: [[Field]] -> String -> IO ()
 go board color = do
